@@ -58,6 +58,9 @@ def process_message(msg):
     # If it's not there, create one that has None in both parts
     parts = MESSAGES.get(msg_id, [None, None])
 
+    if parts[part_number] != None:
+        return 'OK'
+
     # store this part of the message in the correct part of the list
     parts[part_number] = data
 
