@@ -51,12 +51,22 @@ def process_message(msg):
     processes the messages by combining and appending the kind code
     """
     msg_id = msg['Id'] # The unique ID for this message
+
+    total_parts = msg['TotalParts']
+
+    if total_parts <= 0:
+        print "received bad partial message:", msg
+        return 'ERROR'
+
     part_number = msg['PartNumber'] # Which part of the message it is
     data = msg['Data'] # The data of the message
 
     # Try to get the parts of the message from the MESSAGES dictionary.
-    # If it's not there, create one that has None in both parts
-    parts = MESSAGES.get(msg_id, [None, None])
+    # If it's not there, create one that has None as all parts
+    parts = MESSAGES.get(msg_id, [None] * total_parts)
+
+    if parts[part_number] != None:
+        return 'OK'
 
     # store this part of the message in the correct part of the list
     parts[part_number] = data
@@ -69,7 +79,7 @@ def process_message(msg):
         # app.logger.debug("got a complete message for %s" % msg_id)
         print "have both parts"
         # We can build the final message.
-        result = parts[0] + parts[1]
+        result = ''.join(parts)
         # sending the response to the score calculator
         # format:
         #   url -> api_base/jFgwN4GvTB1D2QiQsQ8GHwQUbbIJBS6r7ko9RVthXCJqAiobMsLRmsuwZRQTlOEW
@@ -83,7 +93,7 @@ def process_message(msg):
         req = urllib2.Request(url, data=result, headers={'x-gameday-token':ARGS.API_token})
         resp = urllib2.urlopen(req)
         resp.close()
-        print response
+        print resp.getcode()
 
     return 'OK'
 
@@ -93,6 +103,6 @@ if __name__ == "__main__":
     # This will cause the app to block requests, which means that you miss out on some points,
     # and fail ALB healthchecks, but whatever I know I'm getting fired on Friday.
     APP.run(host="0.0.0.0", port="80")
-    
+
     # Use this to enable threading:
     # APP.run(host="0.0.0.0", port="80", threaded=True)
