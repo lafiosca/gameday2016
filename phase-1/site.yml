@@ -1,0 +1,34 @@
+# ansible-playbook site.yml
+- name: Create new environment
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: Create ec2 instance
+      ec2:
+        key_name: "{{ aws_priv_key }}"
+        #group_id: ['{{ sg_web_public.group_id }}', '{{ sg_ssh_limited.group_id }}', '{{ aws_sg_default }}']
+        group_id: ['{{ sg_web }}']
+        instance_tags:
+          Name: "{{ instance_name }}"
+          Environment: "{{ instance_environment }}"
+        count_tag:
+          Name: "{{ instance_name }}"
+          Environment: "{{ instance_environment }}"
+        exact_count: "{{ instance_count }}"
+        instance_type: "{{ instance_type|default('t2.micro')}}"
+        assign_public_ip: yes
+        image: "{{ aws_ami_id }}"
+        region: "{{ aws_region }}"
+        #instance_profile_name: "Webserver"
+        wait: yes
+        vpc_subnet_id: "{{ vpc_subnet_id|default(aws_subnet_pri_priv) }}"
+        zone: "{{ zone|default(aws_zone_pri) }}"
+        volumes:
+          - device_name: /dev/xvda
+            volume_type: gp2
+            volume_size: "{{ root_ebs_size|default('8')}}"
+            delete_on_termination: true
+      register: ec2_gameday

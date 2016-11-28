@@ -1,0 +1,10 @@
+aws_priv_key: "tim-tam-slam-1"
+aws_zone_pri: "eu-central-1a"
+aws_ami_id: "ami-0044b96f"
+aws_region: "eu-central-1"
+instance_count: 1
+instance_type: 't2.micro'
+instance_name: "phase1"
+instance_environment: "TimTamSlam"
+vpc_subnet_id: subnet-063a816e
+sg_web: "sg-01eacd69"
