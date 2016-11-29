@@ -37,7 +37,7 @@ function processMessage(message, callback) {
 		path: '/',
 		method: 'POST',
 		headers: {
-			'Content-Type': 'application/x-www-form-urlencoded',
+			'Content-Type': 'application/json',
 			'Content-Length': Buffer.byteLength(unicornMessage),
 		},
 	};
