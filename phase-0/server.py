@@ -70,7 +70,12 @@ def process_message(msg):
         # Create new item
         dynamo_post.new_item(msg_id, total_parts)
         return 'OK'
+
     elif result == 'Exception':
+        return 'OK'
+
+    elif type(result) = type(' '):
+        print('This should not be a string: "%s"' % result)
         return 'OK'
 
     # parts = MESSAGES.get(msg_id, [None] * total_parts)
