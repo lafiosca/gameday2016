@@ -12,6 +12,8 @@ import logging
 import argparse
 import urllib2
 
+import dynamo_post
+
 # logging.basicConfig(level=logging.DEBUG)
 
 # parsing arguments
@@ -63,16 +65,25 @@ def process_message(msg):
 
     # Try to get the parts of the message from the MESSAGES dictionary.
     # If it's not there, create one that has None as all parts
-    parts = MESSAGES.get(msg_id, [None] * total_parts)
+    result = dynamo_post.check_id(msg_id) # None if not found, data otherwise
+    if result == None:
+        # Create new item
+        dynamo_post.new_item(msg_id, total_parts)
+        return 'OK'
+
+    # parts = MESSAGES.get(msg_id, [None] * total_parts)
+    parts = result['data']
 
     if parts[part_number] != None:
+        # Already have data, no need to update
         return 'OK'
 
     # store this part of the message in the correct part of the list
     parts[part_number] = data
 
     # store the parts in MESSAGES
-    MESSAGES[msg_id] = parts
+    # MESSAGES[msg_id] = parts
+    dynamo_post.update_item(msg_id, parts)
 
     # if both parts are filled, the message is complete
     if None not in parts:
@@ -102,7 +113,7 @@ if __name__ == "__main__":
     # By default, we disable threading for "debugging" purposes.
     # This will cause the app to block requests, which means that you miss out on some points,
     # and fail ALB healthchecks, but whatever I know I'm getting fired on Friday.
-    APP.run(host="0.0.0.0", port="80")
+    # APP.run(host="0.0.0.0", port="80")
 
     # Use this to enable threading:
-    # APP.run(host="0.0.0.0", port="80", threaded=True)
+    APP.run(host="0.0.0.0", port="80", threaded=True)
