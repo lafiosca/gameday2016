@@ -1,0 +1,17 @@
+{
+    "FunctionName": "sqs-to-http",
+    "Code": {
+        "ZipFile": "sqs-to-http.zip"
+    },
+    "VpcConfig": {
+        "SubnetIds": [],
+        "SecurityGroupIds": []
+    },
+    "MemorySize": 128,
+    "Handler": "index.handler",
+    "Role": "arn:aws:iam::246516751221:role/qls-624375-9802bd5bfd898f7f-PlayerRole-W3N5WRKSOUXO",
+    "Timeout": 10,
+    "Runtime": "nodejs4.3",
+    "Description": "Convert Unicorn messages from SQS to HTTP",
+    "Publish": true
+}
