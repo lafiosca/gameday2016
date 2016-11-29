@@ -66,9 +66,11 @@ def process_message(msg):
     # Try to get the parts of the message from the MESSAGES dictionary.
     # If it's not there, create one that has None as all parts
     result = dynamo_post.check_id(msg_id) # None if not found, data otherwise
-    if result == None:
+    if result == 'NoKey':
         # Create new item
         dynamo_post.new_item(msg_id, total_parts)
+        return 'OK'
+    elif result == 'Exception':
         return 'OK'
 
     # parts = MESSAGES.get(msg_id, [None] * total_parts)
@@ -76,6 +78,7 @@ def process_message(msg):
 
     if parts[part_number] != None:
         # Already have data, no need to update
+        print('Already have data for this part')
         return 'OK'
 
     # store this part of the message in the correct part of the list

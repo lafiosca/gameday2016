@@ -29,10 +29,14 @@ def check_id(id):
 			Key={
 				'Id': id
 			})
-		item = response['Item']
-	except:
-		return None
+		
+	except Exception as e:
+		print(e)
+		return 'Exception'
 	else:
+		if not response.has_key('Item'):
+			return 'NoKey'
+		item = response['Item']
 		print(response['Item'])
 		return response['Item']
 		
